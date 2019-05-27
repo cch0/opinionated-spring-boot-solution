@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: Account
+  sleuth:
+    sampler:
+      # demo purpose only
+      probability: 1.0
+  zipkin:
+    # zipkin server location
+    base-url: http://localhost:9411
+    enabled: true
+    service:
+      name: account-service
+
+# feign configuration
+feign:
+  okhttp:
+    enabled: false
+  httpclient:
+    enabled: true
+  client:
+    config:
+      # payment service connection configuration
+      payment:
+        connectTimeout: 5000
+        readTimeout: 10000
+        loggerLevel: full
+
+client:
+  payment:
+    name: payment
+    url: http://localhost:8081
+
+
+# logbook
+logbook:
+  format:
+    style: json
+  include:
+    - /accounts/**
+  exclude:
+    - /favicon.ico
+    - /actuator/**
+logging:
+  level:
+    ROOT: INFO
+    org:
+      zalando:
+        logbook: TRACE
