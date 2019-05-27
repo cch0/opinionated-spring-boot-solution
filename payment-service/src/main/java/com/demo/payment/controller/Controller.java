@@ -1,6 +1,6 @@
-package com.demo.cloudsleuth.controller;
+package com.demo.payment.controller;
 
-import com.demo.cloudsleuth.model.PaymentInfo;
+import com.demo.payment.model.PaymentInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class Controller {
     private void randomDelay() {
         try {
             // sleep a bit
-            Thread.sleep((2*random.nextDouble()*1000);
+            Thread.sleep((long)(2*random.nextDouble()*1000));
         } catch (Exception e) {
             // ignore
         }

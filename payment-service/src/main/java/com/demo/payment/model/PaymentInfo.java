@@ -1,4 +1,4 @@
-package com.demo.cloudsleuth.client.model;
+package com.demo.payment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

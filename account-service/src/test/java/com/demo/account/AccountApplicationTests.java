@@ -1,4 +1,4 @@
-package com.demo.cloudsleuth;
+package com.demo.account;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

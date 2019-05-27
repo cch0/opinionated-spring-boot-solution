@@ -7,7 +7,7 @@ spring:
       probability: 1.0
   zipkin:
     # zipkin server location
-    base-url: http://localhost:9411
+    base-url: http://zipkin-server:9411
     enabled: true
     service:
       name: account-service
@@ -29,7 +29,7 @@ feign:
 client:
   payment:
     name: payment
-    url: http://localhost:8081
+    url: http://payment-service:8080
 
 
 # logbook

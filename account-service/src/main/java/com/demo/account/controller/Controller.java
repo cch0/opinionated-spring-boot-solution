@@ -1,8 +1,8 @@
-package com.demo.cloudsleuth.controller;
+package com.demo.account.controller;
 
-import com.demo.cloudsleuth.client.PaymentClient;
-import com.demo.cloudsleuth.client.model.PaymentInfo;
-import com.demo.cloudsleuth.model.AccountInfo;
+import com.demo.account.client.PaymentClient;
+import com.demo.account.client.model.PaymentInfo;
+import com.demo.account.model.AccountInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

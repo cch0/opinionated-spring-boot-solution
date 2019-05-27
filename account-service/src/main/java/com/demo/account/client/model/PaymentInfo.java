@@ -1,12 +1,14 @@
-package com.demo.cloudsleuth.model;
+package com.demo.account.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PaymentInfo {
     long id;
     Date date;

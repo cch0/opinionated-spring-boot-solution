@@ -30,7 +30,7 @@ In this repo, ideas and solutions are illustrated by applying them to a contrive
 
 
 
-##  1 Request & Response Logging
+## 1. Request & Response Logging
 
 [Logbook](https://github.com/zalando/logbook) is a Java library for HTTP request and response logging. The features it supports and flexibility it provides makes it a good solution to be included.
 
@@ -227,8 +227,40 @@ public class PaymentInfo {
 
 
 
-## 4. Run The Services
+## 4. Run All The Services
+
+If you would like to build the services, a Dockerfile has been provided for each service.
+
+Execute the following command to build container image for all services.
 
 ```
-docker run -d -p 9411:9411 openzipkin/zipkin
+docker-compose build
+```
+
+A `docker-compose.yaml` has been provided to run all services on the host where docker and docker-compose are available.
+
+```
+docker-compose up -d
+```
+
+After all services are up and running, 
+
+**Account Service** 
+
+Account Service is available at `http://localhost:8080`
+
+To retrieve account information for an account id:
+
+```
+http://localhost:8080/accounts/123
+```
+
+
+**Payment Service**
+Payment Service is available at `http://localhost:8081`
+
+To retrieve payment information for account of id 
+
+```
+http://localhost:8081/paymentInfo/accounts/123
 ```
