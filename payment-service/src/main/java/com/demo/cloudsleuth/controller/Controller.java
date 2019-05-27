@@ -26,8 +26,8 @@ public class Controller {
 
     private void randomDelay() {
         try {
-            // sleep between 1 to 3 secs
-            Thread.sleep((1 + random.nextInt(3))*1000);
+            // sleep a bit
+            Thread.sleep((2*random.nextDouble()*1000);
         } catch (Exception e) {
             // ignore
         }

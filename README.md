@@ -1,4 +1,4 @@
-# Opinionated Spring Boot Solution To Common Concerns In Distributed System
+# Opinionated Spring Boot Solutions To Common Concerns In Distributed System
 
 ## Goal
 
@@ -21,7 +21,7 @@ The solutions described here are not specifically for running application in the
 
 ### But Opinionated?
 
-Every problem can likely be solved differently and this is a good thing. The goal is not to convince anyone this solution is better or worse than any other solution but rather seves the purpose of providing a working solution. As technology evolves, wht is considered a best/better solution is going to evolves as well. In other words, the opinionated solution provided here likely has an expiration date associated with it.
+Every problem can likely be solved differently and this is a good thing. The goal is not to convince anyone this solution is better or worse than any other solution but rather seves the purpose of providing a working solution. As technology evolves, what is considered a best/better solution is going to evolves as well. In other words, the opinionated solution provided here likely has an expiration date associated with it.
 
 
 ## Contrived Example
@@ -30,7 +30,7 @@ In this repo, ideas and solutions are illustrated by applying them to a contrive
 
 
 
-##1 Request & Response Logging
+##  1 Request & Response Logging
 
 [Logbook](https://github.com/zalando/logbook) is a Java library for HTTP request and response logging. The features it supports and flexibility it provides makes it a good solution to be included.
 
@@ -72,7 +72,7 @@ logging:
 ```
 
 
-##2 Distributed Tracing
+## 2. Distributed Tracing
 
 A common requirement for services in distributed system is the ability to trace requests sent/received between services and understand where most time is spent. This is espically important when serving a request involves multiple services and the interaction between them is too complex to comprehend easily.
 
@@ -142,7 +142,7 @@ spring:
 A new Trace ID will be created automatically the first time a request is entering into the system. As part of processing the same request, a new Span ID will be created automatically every time a process is interacting with external services (including but not limited to database, queue, etc). Those trace and span information are sent over to Zipkin server for storage and analysis.  
 
 
-##3 Client For Service To Service Communication
+## 3. Client For Service To Service Communication
 
 A typical communication mechanism between services is through HTTP. For a sending side to communicate with the receiving side, there are a few options to be considered:
 
@@ -227,7 +227,7 @@ public class PaymentInfo {
 
 
 
-## 4 Run The Services
+## 4. Run The Services
 
 ```
 docker run -d -p 9411:9411 openzipkin/zipkin
