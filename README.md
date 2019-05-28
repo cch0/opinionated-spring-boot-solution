@@ -71,6 +71,18 @@ logging:
         logbook: TRACE
 ```
 
+**Sample Log Messages**
+
+Incoming Log
+```
+payment-service_1  | 2019-05-28 00:33:05.947 TRACE [payment-service,32cf62ffab4de32b,fcfe924a3b3a35c6,true] 1 --- [nio-8080-exec-1] org.zalando.logbook.Logbook              : {"origin":"remote","type":"request","correlation":"8be56ded8745bf16","protocol":"HTTP/1.1","remote":"172.23.0.4","method":"GET","uri":"http://payment-service:8080/paymentInfo/accounts/123","headers":{"accept":["*/*"],"connection":["keep-alive"],"content-type":["application/json"],"host":["payment-service:8080"],"user-agent":["Java/11.0.3"],"x-b3-parentspanid":["32cf62ffab4de32b"],"x-b3-sampled":["1"],"x-b3-spanid":["fcfe924a3b3a35c6"],"x-b3-traceid":["32cf62ffab4de32b"]},"body":}
+```
+
+Outgoing Log
+```
+payment-service_1  | 2019-05-28 00:33:07.123 TRACE [payment-service,32cf62ffab4de32b,fcfe924a3b3a35c6,true] 1 --- [nio-8080-exec-1] org.zalando.logbook.Logbook              : {"origin":"local","type":"response","correlation":"8be56ded8745bf16","duration":1242,"protocol":"HTTP/1.1","status":200,"headers":{"Content-Type":["application/json;charset=UTF-8"],"Date":["Tue, 28 May 2019 00:33:07 GMT"],"Transfer-Encoding":["chunked"]},"body":{"id":123,"date":"2019-05-28T00:33:07.014+0000"}}
+```
+
 
 ## 2. Distributed Tracing
 
@@ -140,6 +152,10 @@ spring:
 ### How Does It Work
 
 A new Trace ID will be created automatically the first time a request is entering into the system. As part of processing the same request, a new Span ID will be created automatically every time a process is interacting with external services (including but not limited to database, queue, etc). Those trace and span information are sent over to Zipkin server for storage and analysis.  
+
+![tracing01](./docs/img/zipkin_tracing_01.png)
+
+![tracing02](./docs/img/zipkin_tracing_02.png)
 
 
 ## 3. Client For Service To Service Communication
