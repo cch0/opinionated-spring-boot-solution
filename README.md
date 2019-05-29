@@ -29,6 +29,7 @@ Every problem can likely be solved differently and this is a good thing. The goa
 In this repo, ideas and solutions are illustrated by applying them to a contrived example. There is not much real business related functionality implemented and the idea of the example is to have multiple services working together to loosely reflect a real world scenario.
 
 
+![example](./docs/img/example_configuration.png)
 
 ## 1. Request & Response Logging
 
