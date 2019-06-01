@@ -357,3 +357,11 @@ To retrieve payment information for account of id
 ```
 http://localhost:8081/paymentInfo/accounts/123
 ```
+
+## 5. Google Cloud Build Integration
+
+A Cloud Build `cloudbuild.yaml` file has been provided and the github repository has been configured to have a build triggered every time there is a commit pushed to any branch.
+
+Inside `cloudbuild.yaml`, a Docker Cloud Builder is used to execute the `docker build` command for each service using the respective `Dockerfile`.
+
+It is possible to extend this file to also push container image to a container registry such as GCR. 
