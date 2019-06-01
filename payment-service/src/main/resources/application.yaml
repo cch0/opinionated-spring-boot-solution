@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: Payment
+  sleuth:
+    sampler:
+      # demo purpose only
+      probability: 1.0
+  zipkin:
+    # zipkin server location
+    base-url: http://localhost:9411
+    enabled: true
+    service:
+      name: payment-service
+
+server:
+  port: 8081
+
+# logbook
+logbook:
+  format:
+    style: json
+  include:
+    - /paymentInfo/**
+  exclude:
+    - /favicon.ico
+    - /actuator/**
+logging:
+  level:
+    ROOT: INFO
+    org:
+      zalando:
+        logbook: TRACE
+
