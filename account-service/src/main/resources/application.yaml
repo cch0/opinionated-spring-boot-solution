@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: Account
   sleuth:
     sampler:
       # demo purpose only
@@ -45,5 +43,7 @@ logging:
   level:
     ROOT: INFO
     org:
+      springframework:
+        cloud: INFO
       zalando:
         logbook: TRACE

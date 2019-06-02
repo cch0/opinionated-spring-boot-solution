@@ -60,6 +60,10 @@
             <version>${logbook.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-all</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
