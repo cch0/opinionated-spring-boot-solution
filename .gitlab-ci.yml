@@ -1,0 +1,18 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build account service
+  - build payment service
+
+build account:
+  stage:  build account service
+  script:
+    - docker build -t account-service ./account-service
+
+build payment:
+  stage:  build payment service
+  script:
+    - docker build -t payment-service ./payment-service
