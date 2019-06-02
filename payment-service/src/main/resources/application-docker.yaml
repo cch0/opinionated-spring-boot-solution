@@ -1,7 +1,0 @@
-spring:
-  zipkin:
-    # zipkin server location
-    base-url: http://zipkin-server:9411
-
-server:
-  port: 8080

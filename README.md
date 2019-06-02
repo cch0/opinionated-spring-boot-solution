@@ -8,12 +8,12 @@ The focus is on using open source libraries that are developed to work with Spri
 
 ### What is Being Addressed?
 
-* request and response logging
-* distributed tracing
-* API endpoint client
-* service discovery (TBD)
-* configuration management (TBD)
-* secret management (TBD)
+1. request and response logging
+2. distributed tracing
+3. API endpoint client
+4. service discovery
+5. configuration management
+6. secret management (TBD)
 
 ### What Is Not Being Addressed?
 
@@ -235,7 +235,7 @@ A new Trace ID will be created automatically the first time a request is enterin
 ![tracing02](./docs/img/zipkin_tracing_02.png)
 
 
-## 3. Client For Service To Service Communication
+## 3. API Endpoint Client
 
 A typical communication mechanism between services is through HTTP. For a sending side to communicate with the receiving side, there are a few options to be considered:
 
@@ -319,10 +319,113 @@ public class PaymentInfo {
 * Spring Cloud OpenFeign does depend on a Client Load Balancer solution. For it to work, an additional dependency (Ribbon) is also brought in as well. Whether or not using Client Load Balancer together in the Spring Boot application is recommended is up for debate.
 
 
+## 4. Service Discovery
 
-## 4. Run All The Services
+[Consul](https://www.consul.io/) provides a Key/Value Store for storing configuration and other metadata. In additional to that, Consul also provides **Service Discovery** and **Health Checking** functionalities. 
 
-If you would like to build the services, a Dockerfile has been provided for each service.
+[Spring Cloud Consul](https://spring.io/projects/spring-cloud-consul) is chosen to provide Consul integrations for Spring Boot application. When application starts up, it registeres with Consul server and retrieves configuration data from it. Once registered, Consul performs health check on a regular basis and allows other applications to discover this service. When configuration data is updated, application can also discover the change by using Config Watch which runs on a configurable interval.
+
+### Configuration
+
+**`pom.xml`** 
+```
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-consul-all</artifactId>
+</dependency>
+```
+
+**Sample configuration in `bootstrap.yaml`**
+
+The Consul configuration shown here assumes Consul Server is reachable at localhost. Dependents on the configuration, a Consul Agent running at localhost is more likely a better choice. Consul Agent then communicates with Consul Server on behave of the application so that application does not need to know where and how to communicate to Consul Server.
+
+
+```
+spring:
+  application:
+    name: Account
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        # to have unique name in Consul
+        instance-id: ${spring.application.name}:${random.value}
+      config:
+        enabled: true
+        watch:
+          # delay in milliseconds, the frequency of when ConfigWatch is called
+          delay: 1000
+        prefix: config
+```
+
+The **DiscoveryController** class has sample code to demonstrate how to use **DiscoveryClient** to find out the network location of the dependent service.
+
+
+## 5. Configuration Management
+
+### Configuration
+
+**Sample configuration in `bootstrap.yaml`**
+
+```
+spring:
+  application:
+    name: Account
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+        watch:
+          # delay in milliseconds, the frequency of when ConfigWatch is called
+          delay: 1000
+        prefix: config
+```
+
+**Configuration Data In Consul Key/Value Store**
+
+Configure a key/value pair with the following information
+
+|Key|Value|
+|---|---|
+|config/Account/custom.description|some value|
+
+
+Note on the key format:
+  * `config` is the prefix configured in **bootstrap.yaml** file under `spring.cloud.consul.config.prefix`.
+  * Service name is `Account` and is case sensitive
+  * `custom.description` maps to the Configuration Properties class shown below
+
+
+![consul config](./docs/img/consul_configuration.png)
+
+
+**Configuration Property Class**
+
+All the properties are encapsulated in the **CustomProperties** class and **ConfigurationProperties** annotation is configured with value `custom`. With this configuration, each key configured in Consul will have the `custom.{KEY_NAME}` format. An example of key would be `custom.description`.
+
+```
+@RefreshScope
+@Configuration
+@ConfigurationProperties("custom")
+public class CustomProperties {
+    private String description;
+}
+```
+
+Note:
+* With `RefreshScope` annotation, Config Watch will watch changes in Consul and update value accordingly.
+
+
+
+## Run All The Services
+
+When running each service individually (not using `docker-compose`), Account Service is running at `localhost:8080` and Payment Service is running at `localhost:8081`. Zipkin is assumed to be available at `localhost:9411` and Consul is available at `localhost:8500`.
+
+
+If you would like to build the services as container, a Dockerfile has been provided for each service.
 
 Execute the following command to build container image for all services.
 
@@ -358,7 +461,16 @@ To retrieve payment information for account of id
 http://localhost:8081/paymentInfo/accounts/123
 ```
 
-## 5. Google Cloud Build Integration
+**Zipkin Server**
+
+Zipkin is available at `localhost:9411`
+
+**Consul**
+
+Consul UI is available at `localhost:8500`
+
+
+## Continuous Integration: Google Cloud Build
 
 A Cloud Build `cloudbuild.yaml` file has been provided and the github repository has been configured to have a build triggered every time there is a commit pushed to any branch.
 

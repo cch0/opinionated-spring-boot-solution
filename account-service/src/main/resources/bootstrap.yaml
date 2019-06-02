@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Account
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        # to have unique name in Consul
+        instance-id: ${spring.application.name}:${random.value}
+      config:
+        enabled: true
+        watch:
+          # delay in milliseconds, the frequency of when ConfigWatch is called
+          delay: 1000
+        prefix: config

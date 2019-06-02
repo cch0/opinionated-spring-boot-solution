@@ -1,9 +1,0 @@
-spring:
-  zipkin:
-    # zipkin server location
-    base-url: http://zipkin-server:9411
-
-client:
-  payment:
-    name: payment
-    url: http://payment-service:8080
