@@ -477,3 +477,7 @@ A Cloud Build `cloudbuild.yaml` file has been provided and the github repository
 Inside `cloudbuild.yaml`, a Docker Cloud Builder is used to execute the `docker build` command for each service using the respective `Dockerfile`.
 
 It is possible to extend this file to also push container image to a container registry such as GCR. 
+
+## Continuous Integration: Gitlab CICD
+
+A `.gitlab-ci.yaml` file has been provided such that a build will be triggered every time a commit is pushed to any branch. What it currently does is to build each service using the provided `Dockerfile. It is possible to extend current pipeline to push container images to container register or deploy to target environment.
