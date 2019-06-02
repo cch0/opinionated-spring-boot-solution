@@ -8,12 +8,12 @@ The focus is on using open source libraries that are developed to work with Spri
 
 ### What is Being Addressed?
 
-* 1. request and response logging
-* 2. distributed tracing
-* 3. API endpoint client
-* 4. service discovery
-* 5. configuration management
-* 6. secret management (TBD)
+1. request and response logging
+2. distributed tracing
+3. API endpoint client
+4. service discovery
+5. configuration management
+6. secret management (TBD)
 
 ### What Is Not Being Addressed?
 
@@ -323,7 +323,7 @@ public class PaymentInfo {
 
 [Consul](https://www.consul.io/) provides a Key/Value Store for storing configuration and other metadata. In additional to that, Consul also provides **Service Discovery** and **Health Checking** functionalities. 
 
-[Spring Cloud Consul](https://spring.io/projects/spring-cloud-consul) is chosen to provides Consul integrations for Spring Boot application. When application starts up, it registeres with Consul server and retrieves configuration data from it. Once registered, Consul performs health check on a regular basis and allows other applications to discover this service. When configuration data is updated, application can also discover the change by using Config Watch which runs on a configurable interval.
+[Spring Cloud Consul](https://spring.io/projects/spring-cloud-consul) is chosen to provide Consul integrations for Spring Boot application. When application starts up, it registeres with Consul server and retrieves configuration data from it. Once registered, Consul performs health check on a regular basis and allows other applications to discover this service. When configuration data is updated, application can also discover the change by using Config Watch which runs on a configurable interval.
 
 ### Configuration
 
@@ -397,6 +397,9 @@ Note on the key format:
   * `config` is the prefix configured in **bootstrap.yaml** file under `spring.cloud.consul.config.prefix`.
   * Service name is `Account` and is case sensitive
   * `custom.description` maps to the Configuration Properties class shown below
+
+
+![consul config](./docs/img/consul_configuration.png)
 
 
 **Configuration Property Class**
