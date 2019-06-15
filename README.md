@@ -508,15 +508,14 @@ Use the following commands to create a new token for application to use.
 # login with root token
 vault login 
 
-# create new token
+# create new token for application to use. make a note of the new token and set up environment variable such as SPRING_CLOUD_VAULT_TOKEN
 vault token create
 
+# enable KV secret engine and specifically specify the path
 vault secrets enable -path=secret kv
 
 # this is only for demo purpose so that account service can read the values from the secret
 vault write secret/Account vault.username=mike vault.password=hello
-
-keytool --keystore truststore.jks -import -file vault.crt
 
 ```
 
