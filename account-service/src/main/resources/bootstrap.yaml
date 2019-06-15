@@ -14,3 +14,18 @@ spring:
           # delay in milliseconds, the frequency of when ConfigWatch is called
           delay: 1000
         prefix: config
+    vault:
+      enabled: true
+      # spring cloud vault will verify SAN in the vault server's certificate,
+      # the cert in this demo has this in SAN: DNS:vault,IP:127.0.0.1
+      uri: https://127.0.0.1:8200
+      ssl:
+        trust-store: classpath:/truststore.jks
+        trust-store-password: changeit
+      scheme: https
+      kv:
+        enabled: true
+        # vault kv secret backend path, configured as: vault secrets enable -path=secret kv
+        backend: secret
+      # illustration purpose only, token should be coming from environment variable: SPRING_CLOUD_VAULT_TOKEN
+      token: s.bs3MxGTRrJwU3MDCYU8sOWJT

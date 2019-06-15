@@ -1,0 +1,20 @@
+{
+	"listener": [{
+		"tcp": {
+			"address": "0.0.0.0:8200",
+			"tls_disable" : 0,
+			"tls_cert_file" : "/vault/config/vault.crt",
+			"tls_key_file" : "/vault/config/vault-private.key",
+			"tls_disable_client_certs" : 1
+		}
+	}],
+	"storage" :{
+		"consul" : {
+			"path" : "vault",
+			"address": "consul:8500"
+		}
+	},
+	"ui": true,
+	"max_lease_ttl": "10h",
+	"default_lease_ttl": "10h"
+}

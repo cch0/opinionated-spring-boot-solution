@@ -3,6 +3,7 @@ package com.demo.account.controller;
 import com.demo.account.client.PaymentClient;
 import com.demo.account.client.model.PaymentInfo;
 import com.demo.account.config.CustomProperties;
+import com.demo.account.config.VaultSecret;
 import com.demo.account.model.AccountInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,16 @@ public class Controller {
     @Autowired
     CustomProperties customProperties;
 
+    @Autowired
+    VaultSecret vaultSecret;
+
     @RequestMapping("/accounts/{id}")
     public AccountInfo getAccountInfo(@PathVariable long id) {
         log.info("Handling getAccountInfo, id={}", id);
         log.info("custom properties, description={}", customProperties.getDescription());
+
+        // illustration purpose only
+        log.info("vault secret, username={}, password={}", vaultSecret.getUsername(), vaultSecret.getPassword());
 
         PaymentInfo paymentInfo = paymentClient.getPaymentInfo(id);
 

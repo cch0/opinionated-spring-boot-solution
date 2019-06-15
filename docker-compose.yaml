@@ -10,12 +10,13 @@ services:
       - CLIENT_PAYMENT_URL=http://payment-service:8080
       - SPRING_ZIPKIN_BASE-URL=http://zipkin-server:9411
       - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_VAULT_URI=https://vault:8200
+      # illustration purpose only, need to be replaced by the new token after Vault is unsealed
+      - SPRING_CLOUD_VAULT_TOKEN=s.bs3MxGTRrJwU3MDCYU8sOWJT
     depends_on:
       - payment-service
-      - zipkin-server
-      - consul
     networks:
-      - backend  
+      - opinionated-spring-boot-solution_backend
   payment-service:
     build: payment-service
     image: opinionated-spring-boot-solution_payment-service:latest
@@ -26,22 +27,8 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_ZIPKIN_BASE-URL=http://zipkin-server:9411
       - SPRING_CLOUD_CONSUL_HOST=consul
-    depends_on:
-      - zipkin-server
-      - consul
     networks:
-      - backend  
-  zipkin-server:
-    image: "openzipkin/zipkin"
-    ports: 
-      - "9411:9411"
-    networks:
-      - backend  
-  consul:
-    image: "consul:1.5.1"
-    ports:
-      - "8500:8500"
-    networks: 
-      - backend
+      - opinionated-spring-boot-solution_backend
 networks:
-  backend:
+  opinionated-spring-boot-solution_backend:
+    external: true
