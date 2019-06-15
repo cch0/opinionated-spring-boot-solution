@@ -36,4 +36,9 @@ hs_err_pid*
 # Mac
 .DS_Store
 
+# vault
+vault/data
+vault/file
+vault/logs
+
 

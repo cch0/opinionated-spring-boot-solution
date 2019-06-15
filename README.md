@@ -13,11 +13,11 @@ The focus is on using open source libraries that are developed to work with Spri
 3. API endpoint client
 4. service discovery
 5. configuration management
-6. secret management (TBD)
+6. secret management
 
 ### What Is Not Being Addressed?
 
-The solutions described here are not specifically for running application in the Cloud environment and/or in Kubernetes cluster. To take advantage of Cloud and/or Kubernetes, a different set of solutions are recommended and is covered in `yet-to-defined` repository.
+The solutions described here are NOT specifically for running application in the Cloud environment and/or in Kubernetes cluster. To take advantage of Cloud and/or Kubernetes, a different set of solutions are recommended and is covered in `to-be-created` repository.
 
 ### But Opinionated?
 
@@ -419,10 +419,135 @@ Note:
 * With `RefreshScope` annotation, Config Watch will watch changes in Consul and update value accordingly.
 
 
+## Running Infrastructure Services
 
-## Run All The Services
+Infrastructure services are the services which are supporting application services but itself does not contain business logic. Example such as Vault, Consul and Zipkin.
 
-When running each service individually (not using `docker-compose`), Account Service is running at `localhost:8080` and Payment Service is running at `localhost:8081`. Zipkin is assumed to be available at `localhost:9411` and Consul is available at `localhost:8500`.
+### Preparation
+
+#### Create Vault Private Key and Certificate
+
+Use the following command to generate a private key and self-signed certificate. Make modification to the `subj` as needed. Note that SAN is configured for `DNS:vault` and `IP:127.0.0.1`. SAN is important in the sens that Spring Cloud Vault will verify Vault server's certificate when application tries to connect to it. 
+
+```
+openssl req \
+       -newkey rsa:2048 -nodes -keyout vault-private.key \
+       -x509 -days 365 -out vault.crt \
+       -subj "/C=US/ST=Washington/L=Seattle/O=Awesome Company/CN=awesome.dev" \
+       -reqexts SAN \
+       -config <(cat /etc/ssl/openssl.cnf \
+        <(printf "\n[SAN]\nsubjectAltName=DNS:vault,IP:127.0.0.1")) \
+        -extensions SAN
+```        
+
+`vault/config` directory already includes a private key and certificate for Vault. If new files are generated, they should replace existing ones.
+
+#### Create Truststore For Application 
+
+One way for application to trust Vault's certificate is to add the certificate in its truststore. Use the following command to create a new truststore and import Vault's cert into it.
+
+```
+keytool --keystore truststore.jks -import -file vault.crt
+```
+
+
+#### Vault TLS Configuration
+
+- In [docker-compose-infra.yaml](docer-compose-infra.yaml) file, an environment variable `VAULT_CACERT=/vault/config/vault.crt` is set to use the same certificate file as CA cert so that Vault will not complain about not being able to verify ceritifcate. This is only for demonstration purpose. 
+
+
+- [local.json](vault/config/local.json) contains the Vault configuration. In this file, 
+  - `tls_cert_file` and `tls_key_file` specifies the location of the certificate and private key files. 
+
+  - `tls_disable_client_certs` is set to true such that client does not need to present a certificate when it tries to connect. This is also for demonstration purpose.
+
+
+### Run the Infrastructure Services Using Docker Compose
+
+Use the following command to run infrastructure services that applications depden on. 
+
+```
+docker-compose -f docker-compose-infra.yaml up -d
+```
+
+#### Initialize and Unseal Vault
+
+Use the following command to shell into Vault container.
+
+```
+docker exec -it  $(docker ps | grep vault | awk '{print $1}') /bin/sh
+```
+
+Once in, use the following command to unseal Vault
+
+```
+vault operator init
+```
+
+Use the 3 out of 5 unseal keys to unseal Vault. Take a note of root token as well.
+
+```
+/ # vault operator init
+Unseal Key 1: iAWUEldvuMRgE2jZg+EaFQOx9c1ecitbzeB6DKTP11sx
+Unseal Key 2: kTlBu/QVeBm5jptqXfHR6u+TGtbsRWIYhoelB2paxQIH
+Unseal Key 3: XMCKzQPdKhjlfLwyXWmn/F4ZB9ifS+U26MfeVMDrHnvz
+Unseal Key 4: XnjUkiBi3qvCR/47AvMqjBZjCbZPo5ykdWptUAlCaZ/0
+Unseal Key 5: cXIhVy9ZeWv7C93cjJOz5AWy7vX0Z61w52vh+cTYW2h8
+
+Initial Root Token: s.39FdyeIge13g3dX4VooS7tO0
+
+```
+
+#### Seed Vault With Secrets
+
+Once Vault is unsealed, we can start storing secrets into the Vault. The actual content will be encrypted and stored in Consul.
+
+Use the following commands to create a new token for application to use.
+
+```
+# login with root token
+vault login 
+
+# create new token
+vault token create
+
+vault secrets enable -path=secret kv
+
+# this is only for demo purpose so that account service can read the values from the secret
+vault write secret/Account vault.username=mike vault.password=hello
+
+keytool --keystore truststore.jks -import -file vault.crt
+
+```
+
+Alternatively, Vault provides UI which you can use to create secrets. Login requres a token.
+
+![vault UI](docs/img/vault_secret.png)
+
+
+#### Application Configuration
+
+In the application where vault is being used to retrieve information, use `@ConfigurationProperties` annotation and specifies `vault` as value. This way secret value with key `vault.username` will map to the `username` property in this class.
+
+```
+@Configuration
+@ConfigurationProperties(value = "vault")
+@EnableConfigurationProperties(VaultSecret.class)
+public class VaultSecret {
+    private String username;
+    private String password;
+}
+```
+
+
+## Running Application Services
+
+When running each service individually (not using `docker-compose`): 
+- Account Service is running at `localhost:8080`  
+- Payment Service is running at `localhost:8081`
+- Zipkin is assumed to be available at `localhost:9411`
+- Consul is assumed to be available at `localhost:8500`
+- Vault is assumed to be available at `localhost:8200`
 
 
 If you would like to build the services as container, a Dockerfile has been provided for each service.
@@ -430,13 +555,13 @@ If you would like to build the services as container, a Dockerfile has been prov
 Execute the following command to build container image for all services.
 
 ```
-docker-compose build
+docker-compose -f docker-compose.yaml build
 ```
 
 A `docker-compose.yaml` has been provided to run all services on the host where docker and docker-compose are available.
 
 ```
-docker-compose up -d
+docker-compose -f docker-compose.yaml up -d
 ```
 
 After all services are up and running, 
@@ -463,11 +588,15 @@ http://localhost:8081/paymentInfo/accounts/123
 
 **Zipkin Server**
 
-Zipkin is available at `localhost:9411`
+Zipkin is available at `http://localhost:9411`
 
 **Consul**
 
-Consul UI is available at `localhost:8500`
+Consul UI is available at `http://localhost:8500`
+
+**Vault**
+
+Vault UI is available at `https://localhost:8200/ui`
 
 
 ## Continuous Integration: Google Cloud Build

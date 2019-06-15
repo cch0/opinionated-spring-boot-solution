@@ -1,0 +1,33 @@
+version: '3'
+services:
+  zipkin-server:
+    image: "openzipkin/zipkin"
+    ports: 
+      - "9411:9411"
+    networks:
+      - backend
+  consul:
+    image: "consul:1.5.1"
+    ports:
+      - "8500:8500"
+    networks: 
+      - backend
+  vault:
+    image: "vault:1.1.2"
+    ports:
+      - "8200:8200"
+    command: server
+    environment: 
+      - VAULT_API_ADDR=https://127.0.0.1:8200
+      - VAULT_ADDR=https://127.0.0.1:8200
+      - VAULT_CACERT=/vault/config/vault.crt
+    cap_add: 
+      - IPC_LOCK
+    volumes: 
+      - ./vault:/vault
+    networks: 
+      - backend
+    depends_on: 
+      - consul
+networks:
+  backend:
